@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Barbearia Navalha Agendamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#111214);--ink:light-dark(#15161a,#f1f1f2);--mut:light-dark(#5b5d66,#a6a8b0);--line:light-dark(#e2e3e7,#2a2c31);--card:light-dark(#f5f5f7,#1a1b1f);--red:light-dark(#c41e2d,#ff5c63);--blue:light-dark(#1b4f93,#78a8ec);--ok:light-dark(#1d7a40,#62d18f);--warn:light-dark(#9a6400,#f0b54a)}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Archivo,Inter,sans-serif;line-height:1.05;letter-spacing:-.02em;margin:0 0 .5em;text-wrap:balance}
+h1{font-size:clamp(32px,5vw,50px);font-weight:800}
+h2{font-size:clamp(24px,3vw,32px);font-weight:800}
+h3{font-size:18px;font-weight:600;letter-spacing:0}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:max(4vw,16px)}
+.band{padding-block:clamp(28px,4vw,56px)}
+header{border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:10px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 20px Archivo,sans-serif;margin-right:auto}
+.logo svg{width:26px;height:34px}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{text-decoration:none;padding:10px 12px;border-radius:8px;font-weight:500;color:var(--mut)}
+nav a:hover{background:var(--card);color:var(--ink)}
+nav a.on{color:var(--ink);background:var(--card)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 20px;border-radius:10px;border:2px solid var(--red);background:var(--red);color:#fff;font:600 16px Inter,sans-serif;text-decoration:none;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px}
+.btn.ok{background:var(--ok);border-color:var(--ok)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.lead{font-size:18px;color:var(--mut);max-width:34em}
+.hero{background:var(--card)}
+.hero-g{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:32px;align-items:center}
+.pole{height:340px;display:flex;justify-content:center}
+.pole svg{height:100%}
+.stripes{animation:roll 6s linear infinite}
+@keyframes roll{to{transform:translateY(120px)}}
+@media(prefers-reduced-motion:reduce){.stripes{animation:none}}
+.svc{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px 24px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)}
+.svc b{font-weight:600}
+.svc span{color:var(--mut);white-space:nowrap}
+.svc strong{white-space:nowrap;font-variant-numeric:tabular-nums}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.box p{margin:.2em 0;color:var(--mut)}
+.book{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}
+.step{margin-bottom:28px}
+.step h3 i{font-style:normal;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:14px;margin-right:8px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.opt{text-align:left;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;font:inherit;min-height:44px}
+.opt:hover{border-color:var(--mut)}
+.opt.sel{border-color:var(--red);background:color-mix(in srgb,var(--red) 8%,var(--bg))}
+.opt b{display:block}
+.opt small{color:var(--mut);font-size:14px}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.days .opt{flex:none;text-align:center;min-width:86px;text-transform:capitalize}
+.slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-top:12px}
+.slot{min-height:44px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:600 15px Inter,sans-serif;cursor:pointer;font-variant-numeric:tabular-nums}
+.slot.sel{background:var(--red);border-color:var(--red);color:#fff}
+.slot:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+.hint{color:var(--mut);font-size:14px}
+label{display:block;font-weight:500;margin-bottom:12px}
+input,select{display:block;width:100%;margin-top:4px;min-height:46px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:16px Inter,sans-serif}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}
+.ticket{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;position:sticky;top:90px}
+.ticket dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;margin:0 0 16px}
+.ticket dt{color:var(--mut)}
+.ticket dd{margin:0;font-weight:600;text-align:right}
+.ticket .tot{border-top:2px dashed var(--line);padding-top:12px;display:flex;justify-content:space-between;font:800 22px Archivo,sans-serif;margin-bottom:16px}
+.done{max-width:520px;margin:0 auto;text-align:center}
+.done .ticket{position:static;text-align:left;margin:20px 0}
+.code{font:800 40px Archivo,sans-serif;color:var(--red)}
+.check{width:64px;height:64px;border-radius:50%;background:var(--ok);display:grid;place-items:center;margin:0 auto 14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:12px;margin:18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat span{color:var(--mut);font-size:14px}
+.stat b{display:block;font:800 clamp(24px,3vw,32px) Archivo,sans-serif;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-weight:600;color:var(--mut);background:var(--card);font-size:14px}
+tr:last-child td{border-bottom:0}
+td.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap}
+.b-confirmado{background:color-mix(in srgb,var(--blue) 15%,transparent);color:var(--blue)}
+.b-concluido{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.b-cancelado{background:color-mix(in srgb,var(--red) 13%,transparent);color:var(--red)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tabs a{text-decoration:none;padding:10px 14px;font-weight:600;color:var(--mut);border-bottom:3px solid transparent}
+.tabs a.on{color:var(--ink);border-color:var(--red)}
+.login{max-width:400px;margin:0 auto}
+.msg{padding:12px 14px;border-radius:10px;background:color-mix(in srgb,var(--red) 12%,transparent);color:var(--red);margin-bottom:12px}
+.empty{padding:28px;text-align:center;color:var(--mut)}
+footer{border-top:1px solid var(--line);color:var(--mut);font-size:14px;padding-block:20px;margin-top:20px}
+@media(max-width:860px){.book{grid-template-columns:minmax(0,1fr)}.ticket{position:static}}
+@media(max-width:600px){.hero-g,.g3,.f2{grid-template-columns:minmax(0,1fr)}.pole{height:240px}nav a{padding:8px 9px;font-size:15px}table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding:10px 12px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:4px 0;text-align:right}.stack td::before{content:attr(data-l);color:var(--mut);text-align:left}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header><div class="wrap top">
+<a class="logo" href="#inicio"><svg viewBox="0 0 26 34" aria-hidden="true"><rect x="5" y="0" width="16" height="4" rx="2" fill="currentColor"/><rect x="7" y="4" width="12" height="26" fill="#fff" stroke="currentColor" stroke-width="1.5"/><path d="M7 8l12-4v5L7 13zM7 17l12-4v5L7 22zM7 26l12-4v5L7 30z" fill="#c41e2d"/><rect x="5" y="30" width="16" height="4" rx="2" fill="currentColor"/></svg>Barbearia Navalha</a>
+<nav id="nav"></nav>
+</div></header>
+<main id="app"></main>
+<footer><div class="wrap">Barbearia Navalha · Sistema web de agendamento · Protótipo com dados de exemplo para o TCC de Informática para Internet</div></footer>
+<script>
+{
+const K='navalha-agenda-v1';
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const addD=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const HOJE=iso(new Date());
+const toMin=h=>{const p=h.split(':');return +p[0]*60+ +p[1]};
+const toH=m=>pad(Math.floor(m/60))+':'+pad(m%60);
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dig=s=>String(s).replace(/\D/g,'');
+const pd=s=>{const p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
+const dCurto=s=>pd(s).toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
+const dLongo=s=>pd(s).toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+const ST={confirmado:'Confirmado',concluido:'Concluído',cancelado:'Cancelado'};
+
+function seed(){
+  const t=new Date(),a=iso(t),b=iso(addD(t,1)),c=iso(addD(t,2));
+  return {seq:1008,logado:false,
+  servicos:[{id:1,nome:'Corte social',dur:30,preco:35},{id:2,nome:'Corte degradê',dur:30,preco:40},{id:3,nome:'Barba completa',dur:30,preco:25},{id:4,nome:'Corte + barba',dur:60,preco:60},{id:5,nome:'Pigmentação',dur:60,preco:50}],
+  barbeiros:[{id:1,nome:'Rafael Souza',esp:'Degradê e navalhado',ativo:true},{id:2,nome:'Diego Lima',esp:'Barba e pigmentação',ativo:true},{id:3,nome:'Marcos Andrade',esp:'Corte social',ativo:true}],
+  ags:[
+   {id:1001,cli:'João Pedro Silva',tel:'(92) 99123-4567',sv:4,bb:1,data:a,hora:'09:00',st:'concluido'},
+   {id:1002,cli:'Carlos Eduardo Melo',tel:'(92) 98877-1020',sv:2,bb:2,data:a,hora:'10:00',st:'concluido'},
+   {id:1003,cli:'Bruno Henrique Costa',tel:'(92) 99210-3344',sv:3,bb:1,data:a,hora:'11:00',st:'confirmado'},
+   {id:1004,cli:'Felipe Araújo',tel:'(92) 98456-7788',sv:1,bb:3,data:a,hora:'14:00',st:'confirmado'},
+   {id:1005,cli:'Thiago Nascimento',tel:'(92) 99345-6612',sv:5,bb:2,data:a,hora:'15:30',st:'confirmado'},
+   {id:1006,cli:'André Luiz Pinto',tel:'(92) 98123-9090',sv:2,bb:1,data:a,hora:'17:00',st:'cancelado'},
+   {id:1007,cli:'João Pedro Silva',tel:'(92) 99123-4567',sv:1,bb:3,data:b,hora:'09:30',st:'confirmado'},
+   {id:1008,cli:'Gabriel Rocha',tel:'(92) 99777-2211',sv:4,bb:2,data:c,hora:'16:00',st:'confirmado'}]};
+}
+let S=null;
+try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
+if(!S||!S.servicos)S=seed();
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const sv=id=>S.servicos.find(x=>x.id==id)||{nome:'—',dur:30,preco:0};
+const bb=id=>S.barbeiros.find(x=>x.id==id)||{nome:'—'};
+let B={sv:null,bb:null,data:null,hora:null,cli:'',tel:''};
+let F={data:HOJE,bb:''};
+let Q='',ult=null,erro='';
+
+function livres(b,data,dur){
+  const oc=S.ags.filter(g=>g.bb==b&&g.data==data&&g.st!='cancelado').map(g=>[toMin(g.hora),toMin(g.hora)+sv(g.sv).dur]);
+  const n=new Date(),nm=n.getHours()*60+n.getMinutes(),out=[];
+  for(let m=540;m<1140;m+=30){
+    const fim=m+dur;
+    let ok=fim<=1140&&!oc.some(p=>m<p[1]&&fim>p[0])&&!(m<780&&fim>720);
+    if(data==HOJE&&m<=nm)ok=false;
+    out.push({h:toH(m),ok});
+  }
+  return out;
+}
+function dias(){const r=[];let d=new Date();while(r.length<7){if(d.getDay()!=0)r.push(iso(d));d=addD(d,1)}return r}
+
+const pole=()=>{let s='';const c=['var(--red)','#fff','var(--blue)','#fff'];for(let i=-6,k=0;i<14;i++,k++)s+=`<polygon points="60,${i*30} 140,${i*30-50} 140,${i*30-20} 60,${i*30+30}" fill="${c[(k%4+4)%4]}"/>`;
+  return `<svg viewBox="0 0 200 360" role="img" aria-label="Poste de barbearia"><defs><clipPath id="cl"><rect x="60" y="48" width="80" height="264" rx="6"/></clipPath><linearGradient id="gl" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".35" stop-color="#fff" stop-opacity=".35"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".28"/></linearGradient><linearGradient id="mt" x1="0" x2="1"><stop offset="0" stop-color="#6d7078"/><stop offset=".4" stop-color="#e9eaee"/><stop offset="1" stop-color="#55585f"/></linearGradient></defs>
+  <ellipse cx="100" cy="350" rx="70" ry="8" fill="#000" opacity=".12"/>
+  <rect x="88" y="0" width="24" height="14" rx="4" fill="url(#mt)"/><path d="M50 48 Q50 14 100 14 Q150 14 150 48Z" fill="url(#mt)"/><rect x="46" y="44" width="108" height="10" rx="4" fill="url(#mt)"/>
+  <rect x="60" y="48" width="80" height="264" fill="#fff"/><g clip-path="url(#cl)"><g class="stripes">${s}</g></g><rect x="60" y="48" width="80" height="264" fill="url(#gl)"/>
+  <rect x="46" y="306" width="108" height="10" rx="4" fill="url(#mt)"/><path d="M54 316 H146 L136 344 H64Z" fill="url(#mt)"/></svg>`};
+
+const V={};
+V.inicio=()=>`<section class="hero band"><div class="wrap hero-g"><div><h1>Seu horário na cadeira, marcado em menos de um minuto.</h1><p class="lead">Escolha o serviço, o barbeiro e o horário livre. A confirmação sai na hora, sem ligação e sem fila de espera.</p><div class="row"><a class="btn" href="#agendar">Agendar horário</a><a class="btn sec" href="#meus-agendamentos">Consultar meu agendamento</a></div></div><div class="pole">${pole()}</div></div></section>
+<section class="wrap band"><h2>Serviços e preços</h2>${S.servicos.map(s=>`<div class="svc"><b>${esc(s.nome)}</b><span>${s.dur} min</span><strong>${brl(s.preco)}</strong></div>`).join('')}</section>
+<section class="wrap band" style="padding-top:0"><h2>Nossos barbeiros</h2><div class="g3">${S.barbeiros.filter(b=>b.ativo).map(b=>`<div class="box"><h3>${esc(b.nome)}</h3><p>${esc(b.esp)}</p></div>`).join('')}</div></section>
+<section class="wrap band" style="padding-top:0"><div class="g3"><div class="box"><h3>Funcionamento</h3><p>Segunda a sábado, 09:00 às 19:00</p><p>Intervalo das 12:00 às 13:00</p></div><div class="box"><h3>Endereço</h3><p>Av. Djalma Batista, 1200, Chapada</p><p>Manaus, AM</p></div><div class="box"><h3>Contato</h3><p>(92) 3555-0142</p><p>contato@barbearianavalha.com.br</p></div></div></section>`;
+
+function resumo(){
+  const s=B.sv&&sv(B.sv),ok=B.sv&&B.bb&&B.data&&B.hora&&B.cli.trim().length>2&&dig(B.tel).length>=10;
+  return `<h3>Resumo do agendamento</h3><dl><dt>Serviço</dt><dd>${s?esc(s.nome):'—'}</dd><dt>Barbeiro</dt><dd>${B.bb?esc(bb(B.bb).nome):'—'}</dd><dt>Data</dt><dd>${B.data?dCurto(B.data):'—'}</dd><dt>Horário</dt><dd>${B.hora||'—'}</dd><dt>Duração</dt><dd>${s?s.dur+' min':'—'}</dd></dl><div class="tot"><span>Total</span><span>${s?brl(s.preco):'R$ 0,00'}</span></div><button class="btn" style="width:100%" data-a="confirmar" ${ok?'':'disabled'}>Confirmar agendamento</button><p class="hint">Pagamento feito na barbearia, no dia do atendimento.</p>`;
+}
+V.agendar=()=>{
+  const s=B.sv&&sv(B.sv);
+  const sl=(B.bb&&B.data&&s)?livres(B.bb,B.data,s.dur):null;
+  return `<section class="wrap band"><h1>Agendar horário</h1><div class="book"><div>
+  <div class="step"><h3><i>1</i>Escolha o serviço</h3><div class="opts">${S.servicos.map(x=>`<button class="opt ${B.sv==x.id?'sel':''}" data-a="sv" data-v="${x.id}"><b>${esc(x.nome)}</b><small>${x.dur} min · ${brl(x.preco)}</small></button>`).join('')}</div></div>
+  <div class="step"><h3><i>2</i>Escolha o barbeiro</h3><div class="opts">${S.barbeiros.filter(b=>b.ativo).map(x=>`<button class="opt ${B.bb==x.id?'sel':''}" data-a="bb" data-v="${x.id}"><b>${esc(x.nome)}</b><small>${esc(x.esp)}</small></button>`).join('')}</div></div>
+  <div class="step"><h3><i>3</i>Escolha a data e o horário</h3><div class="days">${dias().map(d=>`<button class="opt ${B.data==d?'sel':''}" data-a="dia" data-v="${d}"><b>${dCurto(d)}</b></button>`).join('')}</div>
+  ${sl?`<div class="slots">${sl.map(x=>`<button class="slot ${B.hora==x.h?'sel':''}" data-a="hora" data-v="${x.h}" ${x.ok?'':'disabled'}>${x.h}</button>`).join('')}</div><p class="hint">Horários riscados já estão ocupados, já passaram ou caem no intervalo de almoço.</p>`:`<p class="hint">Selecione serviço, barbeiro e data para ver os horários livres.</p>`}</div>
+  <div class="step"><h3><i>4</i>Seus dados</h3><div class="f2"><label>Nome completo<input id="cli" value="${esc(B.cli)}" autocomplete="name" placeholder="Ex.: Lucas Guilherme"></label><label>Telefone (WhatsApp)<input id="tel" value="${esc(B.tel)}" inputmode="tel" placeholder="(92) 99999-9999"></label></div></div>
+  </div><aside class="ticket" id="resumo">${resumo()}</aside></div></section>`;
+};
+V.confirmado=()=>{
+  const g=S.ags.find(x=>x.id==ult);
+  if(!g)return `<section class="wrap band"><div class="empty">Nenhum agendamento recente. <a href="#agendar">Agendar horário</a></div></section>`;
+  const s=sv(g.sv);
+  return `<section class="wrap band"><div class="done"><div class="check"><svg width="34" height="34" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h1>Agendamento confirmado</h1><p class="lead" style="margin-inline:auto">Guarde o código abaixo. Para consultar ou cancelar, use o seu telefone em “Meus agendamentos”.</p>
+  <div class="ticket"><p class="hint" style="margin:0">Código do agendamento</p><div class="code">#${g.id}</div><dl><dt>Cliente</dt><dd>${esc(g.cli)}</dd><dt>Serviço</dt><dd>${esc(s.nome)}</dd><dt>Barbeiro</dt><dd>${esc(bb(g.bb).nome)}</dd><dt>Data</dt><dd>${dCurto(g.data)}</dd><dt>Horário</dt><dd>${g.hora}</dd></dl><div class="tot" style="margin:0"><span>Total</span><span>${brl(s.preco)}</span></div></div>
+  <div class="row" style="justify-content:center"><a class="btn" href="#meus-agendamentos">Ver meus agendamentos</a><a class="btn sec" href="#inicio">Voltar ao início</a></div></div></section>`;
+};
+V['meus-agendamentos']=()=>{
+  const l=Q?S.ags.filter(g=>dig(g.tel)==dig(Q)).sort((a,b)=>(b.data+b.hora).localeCompare(a.data+a.hora)):[];
+  return `<section class="wrap band"><h1>Meus agendamentos</h1><p class="lead">Digite o telefone usado no agendamento para consultar ou cancelar.</p>
+  <form id="fq" class="row" style="max-width:560px;align-items:end;margin-bottom:22px"><label style="flex:1;margin:0">Telefone<input id="q" value="${esc(Q)}" inputmode="tel" placeholder="(92) 99123-4567"></label><button class="btn">Consultar</button></form>
+  ${Q?(l.length?`<div class="tw"><table class="stack"><thead><tr><th>Código</th><th>Data</th><th>Horário</th><th>Serviço</th><th>Barbeiro</th><th>Status</th><th></th></tr></thead><tbody>${l.map(g=>`<tr><td>#${g.id}</td><td>${dCurto(g.data)}</td><td class="n">${g.hora}</td><td>${esc(sv(g.sv).nome)}</td><td>${esc(bb(g.bb).nome)}</td><td><span class="badge b-${g.st}">${ST[g.st]}</span></td><td>${g.st=='confirmado'&&g.data>=HOJE?`<button class="btn sec sm" data-a="cancCli" data-v="${g.id}">Cancelar</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:`<div class="box empty">Nenhum agendamento encontrado para esse telefone.</div>`):`<p class="hint">Exemplo para teste: (92) 99123-4567</p>`}</section>`;
+};
+V.login=()=>`<section class="wrap band"><div class="login"><h1>Área do barbeiro</h1><p class="lead">Acesso restrito à equipe da barbearia.</p>${erro?`<div class="msg">${erro}</div>`:''}<form id="fl"><label>Usuário<input id="u" autocomplete="username"></label><label>Senha<input id="p" type="password" autocomplete="current-password"></label><button class="btn" style="width:100%">Entrar</button></form><p class="hint">Acesso de demonstração: usuário <b>admin</b>, senha <b>1234</b>.</p></div></section>`;
+const tabs=a=>`<div class="tabs">${[['painel','Agenda'],['servicos','Serviços'],['barbeiros','Barbeiros']].map(t=>`<a href="#${t[0]}" class="${a==t[0]?'on':''}">${t[1]}</a>`).join('')}</div>`;
+V.painel=()=>{
+  const l=S.ags.filter(g=>g.data==F.data&&(!F.bb||g.bb==F.bb)).sort((a,b)=>a.hora.localeCompare(b.hora));
+  const at=l.filter(g=>g.st!='cancelado');
+  return `<section class="wrap band"><div class="row" style="justify-content:space-between"><h1 style="margin:0">Painel administrativo</h1><button class="btn sec sm" data-a="sair">Sair</button></div><p class="hint">${dLongo(F.data)}</p>${tabs('painel')}
+  <div class="row" style="align-items:end"><label style="margin:0">Data<input type="date" id="fd" value="${F.data}"></label><label style="margin:0">Barbeiro<select id="fb"><option value="">Todos</option>${S.barbeiros.map(b=>`<option value="${b.id}" ${F.bb==b.id?'selected':''}>${esc(b.nome)}</option>`).join('')}</select></label></div>
+  <div class="stats"><div class="stat"><span>Agendamentos</span><b>${at.length}</b></div><div class="stat"><span>Concluídos</span><b>${l.filter(g=>g.st=='concluido').length}</b></div><div class="stat"><span>Cancelados</span><b>${l.filter(g=>g.st=='cancelado').length}</b></div><div class="stat"><span>Faturamento previsto</span><b>${brl(at.reduce((t,g)=>t+sv(g.sv).preco,0))}</b></div></div>
+  ${l.length?`<div class="tw"><table class="stack"><thead><tr><th>Horário</th><th>Cliente</th><th>Telefone</th><th>Serviço</th><th>Barbeiro</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead><tbody>${l.map(g=>`<tr><td class="n"><b>${g.hora}</b></td><td>${esc(g.cli)}</td><td class="n">${esc(g.tel)}</td><td>${esc(sv(g.sv).nome)}</td><td>${esc(bb(g.bb).nome)}</td><td class="n">${brl(sv(g.sv).preco)}</td><td><span class="badge b-${g.st}">${ST[g.st]}</span></td><td><div class="row" style="gap:6px;justify-content:flex-end">${g.st=='confirmado'?`<button class="btn ok sm" data-a="concluir" data-v="${g.id}">Concluir</button><button class="btn sec sm" data-a="cancAdm" data-v="${g.id}">Cancelar</button>`:''}</div></td></tr>`).join('')}</tbody></table></div>`:`<div class="box empty">Nenhum agendamento nesta data.</div>`}
+  <p style="margin-top:22px"><button class="btn sec sm" data-a="reset">Restaurar dados de exemplo</button></p></section>`;
+};
+V.servicos=()=>`<section class="wrap band"><div class="row" style="justify-content:space-between"><h1 style="margin:0">Painel administrativo</h1><button class="btn sec sm" data-a="sair">Sair</button></div><p class="hint">Cadastro de serviços</p>${tabs('servicos')}
+  <div class="tw"><table class="stack"><thead><tr><th>Serviço</th><th>Duração</th><th>Preço</th><th>Ações</th></tr></thead><tbody>${S.servicos.map(s=>`<tr><td>${esc(s.nome)}</td><td class="n">${s.dur} min</td><td class="n">${brl(s.preco)}</td><td><button class="btn sec sm" data-a="rmSv" data-v="${s.id}">Remover</button></td></tr>`).join('')}</tbody></table></div>
+  <h2 style="margin-top:28px">Novo serviço</h2><form id="fs" class="box" style="max-width:640px"><label>Nome do serviço<input id="sn" required placeholder="Ex.: Sobrancelha na navalha"></label><div class="f2"><label>Duração<select id="sd"><option value="30">30 min</option><option value="60">60 min</option><option value="90">90 min</option></select></label><label>Preço (R$)<input id="sp" type="number" min="0" step="0.01" required placeholder="20,00"></label></div><button class="btn">Cadastrar serviço</button></form></section>`;
+V.barbeiros=()=>`<section class="wrap band"><div class="row" style="justify-content:space-between"><h1 style="margin:0">Painel administrativo</h1><button class="btn sec sm" data-a="sair">Sair</button></div><p class="hint">Cadastro de barbeiros</p>${tabs('barbeiros')}
+  <div class="tw"><table class="stack"><thead><tr><th>Barbeiro</th><th>Especialidade</th><th>Agendamentos ativos</th><th>Situação</th><th>Ações</th></tr></thead><tbody>${S.barbeiros.map(b=>`<tr><td>${esc(b.nome)}</td><td>${esc(b.esp)}</td><td class="n">${S.ags.filter(g=>g.bb==b.id&&g.st=='confirmado').length}</td><td><span class="badge ${b.ativo?'b-concluido':'b-cancelado'}">${b.ativo?'Ativo':'Inativo'}</span></td><td><button class="btn sec sm" data-a="togBb" data-v="${b.id}">${b.ativo?'Desativar':'Ativar'}</button></td></tr>`).join('')}</tbody></table></div>
+  <h2 style="margin-top:28px">Novo barbeiro</h2><form id="fbb" class="box" style="max-width:640px"><div class="f2"><label>Nome<input id="bn" required placeholder="Ex.: Paulo Ribeiro"></label><label>Especialidade<input id="be" required placeholder="Ex.: Corte infantil"></label></div><button class="btn">Cadastrar barbeiro</button></form></section>`;
+
+const ADM=['painel','servicos','barbeiros'];
+const app=document.getElementById('app'),nav=document.getElementById('nav');
+function render(){
+  let v=location.hash.slice(1)||'inicio';
+  if(!V[v])v='inicio';
+  if(ADM.includes(v)&&!S.logado)v='login';
+  if(v=='login'&&S.logado)v='painel';
+  const cur=ADM.includes(v)||v=='login'?'adm':v;
+  nav.innerHTML=[['inicio','Início'],['agendar','Agendar'],['meus-agendamentos','Meus agendamentos'],[S.logado?'painel':'login','Área do barbeiro','adm']].map(n=>`<a href="#${n[0]}" class="${cur==(n[2]||n[0])?'on':''}">${n[1]}</a>`).join('');
+  app.innerHTML=V[v]();
+}
+const go=h=>{if(location.hash=='#'+h)render();else location.hash=h};
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-a]');if(!t)return;
+  const a=t.dataset.a,v=t.dataset.v;
+  if(a=='sv'){B.sv=+v;B.hora=null}
+  else if(a=='bb'){B.bb=+v;B.hora=null}
+  else if(a=='dia'){B.data=v;B.hora=null}
+  else if(a=='hora'){B.hora=v}
+  else if(a=='confirmar'){S.seq++;S.ags.push({id:S.seq,cli:B.cli.trim(),tel:B.tel.trim(),sv:B.sv,bb:B.bb,data:B.data,hora:B.hora,st:'confirmado'});ult=S.seq;Q=B.tel.trim();B={sv:null,bb:null,data:null,hora:null,cli:'',tel:''};save();go('confirmado');return}
+  else if(a=='cancCli'||a=='cancAdm'){const g=S.ags.find(x=>x.id==v);if(g)g.st='cancelado'}
+  else if(a=='concluir'){const g=S.ags.find(x=>x.id==v);if(g)g.st='concluido'}
+  else if(a=='rmSv'){S.servicos=S.servicos.filter(x=>x.id!=v)}
+  else if(a=='togBb'){const b=S.barbeiros.find(x=>x.id==v);if(b)b.ativo=!b.ativo}
+  else if(a=='sair'){S.logado=false;save();go('login');return}
+  else if(a=='reset'){S=seed();S.logado=true;F={data:HOJE,bb:''}}
+  save();
+  const y=scrollY;render();scrollTo(0,y);
+});
+document.addEventListener('input',e=>{
+  if(e.target.id=='cli'||e.target.id=='tel'){B[e.target.id]=e.target.value;const r=document.getElementById('resumo');if(r)r.innerHTML=resumo()}
+});
+document.addEventListener('change',e=>{
+  if(e.target.id=='fd'&&e.target.value){F.data=e.target.value;render()}
+  if(e.target.id=='fb'){F.bb=e.target.value;render()}
+});
+document.addEventListener('submit',e=>{
+  e.preventDefault();const f=e.target.id,val=id=>document.getElementById(id).value.trim();
+  if(f=='fq'){Q=val('q');render()}
+  if(f=='fl'){if(val('u')=='admin'&&val('p')=='1234'){S.logado=true;erro='';save();go('painel')}else{erro='Usuário ou senha incorretos.';render()}}
+  if(f=='fs'){const id=Math.max(0,...S.servicos.map(x=>x.id))+1;S.servicos.push({id,nome:val('sn'),dur:+val('sd'),preco:+val('sp')});save();render()}
+  if(f=='fbb'){const id=Math.max(0,...S.barbeiros.map(x=>x.id))+1;S.barbeiros.push({id,nome:val('bn'),esp:val('be'),ativo:true});save();render()}
+});
+addEventListener('hashchange',()=>{render();scrollTo(0,0)});
+render();
+}
+</script>
+</body>
+</html>
